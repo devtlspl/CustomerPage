@@ -6,69 +6,69 @@ import ActivityFeed from "../components/dashboard/ActivityFeed";
 
 const statCards = [
   {
-    label: "Running Assets",
-    value: "128",
-    change: "+12% vs last month",
+    label: "Active Devices",
+    value: "1,248",
+    change: "+7% vs last month",
     trend: "up" as const,
     accent: "primary" as const,
-    sparkline: [40, 42, 38, 44, 46, 49, 52]
+    sparkline: [900, 920, 940, 980, 1020, 1100, 1248]
   },
   {
-    label: "Open Tickets",
-    value: "9",
-    change: "-2 since last week",
+    label: "Open Support Tickets",
+    value: "14",
+    change: "-3 since last week",
     trend: "down" as const,
     accent: "secondary" as const,
-    sparkline: [12, 14, 13, 11, 10, 9, 8]
+    sparkline: [22, 20, 19, 18, 16, 15, 14]
   },
   {
-    label: "Pending Invoices",
-    value: "$42.8k",
-    change: "+$4.2k pending",
+    label: "Pending Renewal Spend",
+    value: "$58.4k",
+    change: "+$6.8k this quarter",
     trend: "steady" as const,
     accent: "tertiary" as const,
-    sparkline: [30, 32, 35, 38, 37, 41, 42]
+    sparkline: [34, 36, 37, 41, 44, 52, 58]
   },
   {
-    label: "Payments Due",
-    value: "4",
-    change: "Due this week",
+    label: "Devices Due Refresh",
+    value: "26",
+    change: "Next 30 days",
     trend: "steady" as const,
     accent: "primary" as const,
-    sparkline: [5, 6, 4, 5, 4, 4, 4]
+    sparkline: [18, 19, 21, 23, 24, 25, 26]
   }
 ];
 
 const trendData = [
-  { month: "Mar", value: 54000 },
-  { month: "Apr", value: 62000 },
-  { month: "May", value: 66000 },
-  { month: "Jun", value: 72000 },
-  { month: "Jul", value: 78000 },
-  { month: "Aug", value: 82000 },
-  { month: "Sep", value: 87000, projection: 91000 }
+  { month: "Mar", value: 42000 },
+  { month: "Apr", value: 48500 },
+  { month: "May", value: 51200 },
+  { month: "Jun", value: 56000 },
+  { month: "Jul", value: 60500 },
+  { month: "Aug", value: 64800 },
+  { month: "Sep", value: 69200, projection: 73500 }
 ];
 
 const distributionData = [
-  { label: "Asset Leasing", value: 45, color: "#2F7BFE" },
-  { label: "Logistics", value: 27, color: "#38D7CF" },
-  { label: "Maintenance", value: 18, color: "#7B46FF" },
-  { label: "Other Services", value: 10, color: "#FFB444" }
+  { label: "Endpoints", value: 40, color: "#2F7BFE" },
+  { label: "Network", value: 25, color: "#38D7CF" },
+  { label: "SaaS Licenses", value: 20, color: "#7B46FF" },
+  { label: "Infrastructure", value: 15, color: "#FFB444" }
 ];
 
 const activities = [
   {
     id: 1,
-    title: "Invoice #1042 paid",
-    description: "Payment of $12,400 received via ACH.",
+    title: "Invoice #5421 paid",
+    description: "Payment of $14,200 for SaaS renewals cleared via ACH.",
     time: "2h ago",
     tag: "INV",
     tone: "success" as const
   },
   {
     id: 2,
-    title: "Asset returned - XR-200",
-    description: "QA checks completed. Asset ready for redeployment.",
+    title: "Device swap completed",
+    description: "Laptop P14-221 reassigned to Engineering after diagnostics.",
     time: "4h ago",
     tag: "AST",
     tone: "info" as const
@@ -76,7 +76,7 @@ const activities = [
   {
     id: 3,
     title: "Ticket escalated",
-    description: "Support ticket #3420 moved to Tier 2 for resolution.",
+    description: "Support ticket #8623 (VPN latency) moved to Tier 2 networking.",
     time: "Yesterday",
     tag: "SUP",
     tone: "warning" as const
@@ -91,8 +91,8 @@ const DashboardPage = () => (
           <p className="text-sm uppercase tracking-[0.4em] text-text-secondary">Welcome back</p>
           <h1 className="mt-3 text-4xl font-semibold text-text-primary">Alex!</h1>
           <p className="mt-4 max-w-xl text-base text-text-secondary">
-            Your portfolio looks strong this quarter. Review the insights below to stay ahead
-            of upcoming payments, support tickets, and asset health.
+            Your IT estate is running smoothly this quarter. Review the insights below to stay
+            ahead of device refreshes, renewal spend, and support demand.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <button className="rounded-full bg-gradient-to-r from-accent-primary to-accent-tertiary px-6 py-3 text-sm font-semibold text-white shadow-glass transition hover:shadow-xl">
@@ -129,8 +129,8 @@ const DashboardPage = () => (
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text-primary">Asset Portfolio Trend</h2>
           <div className="flex items-center gap-2 text-xs text-text-secondary">
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-full bg-accent-primary" />
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-accent-primary" />
               Actual
             </span>
             <span className="inline-flex items-center gap-1">

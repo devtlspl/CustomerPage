@@ -15,38 +15,38 @@ import DistributionDonut from "../components/dashboard/DistributionDonut";
 
 const summaryCards = [
   {
-    label: "Paid this quarter",
-    value: "$148,200",
-    descriptor: "23 payments",
+    label: "Paid IT spend (Q3)",
+    value: "$162,400",
+    descriptor: "27 disbursements",
     accent: "from-accent-primary to-accent-tertiary"
   },
   {
-    label: "Pending approval",
-    value: "$32,480",
-    descriptor: "5 invoices",
+    label: "Pending approvals",
+    value: "$38,920",
+    descriptor: "6 invoices",
     accent: "from-accent-secondary to-accent-primary"
   },
   {
-    label: "Upcoming (14 days)",
-    value: "$18,900",
-    descriptor: "3 payments",
+    label: "Upcoming renewals (14d)",
+    value: "$24,300",
+    descriptor: "4 renewals",
     accent: "from-warning to-danger"
   }
 ];
 
 const barData = [
-  { month: "Apr", paid: 32, pending: 8, overdue: 4 },
-  { month: "May", paid: 36, pending: 6, overdue: 2 },
-  { month: "Jun", paid: 30, pending: 12, overdue: 5 },
-  { month: "Jul", paid: 44, pending: 5, overdue: 1 },
-  { month: "Aug", paid: 38, pending: 9, overdue: 3 },
-  { month: "Sep", paid: 26, pending: 7, overdue: 2 }
+  { month: "Apr", paid: 28, pending: 9, overdue: 3 },
+  { month: "May", paid: 34, pending: 6, overdue: 2 },
+  { month: "Jun", paid: 29, pending: 11, overdue: 4 },
+  { month: "Jul", paid: 41, pending: 6, overdue: 2 },
+  { month: "Aug", paid: 36, pending: 10, overdue: 3 },
+  { month: "Sep", paid: 22, pending: 8, overdue: 2 }
 ];
 
 const paymentSegments = [
-  { label: "ACH", value: 55, color: "#2F7BFE" },
-  { label: "Card", value: 22, color: "#38D7CF" },
-  { label: "Wire", value: 15, color: "#7B46FF" },
+  { label: "ACH", value: 52, color: "#2F7BFE" },
+  { label: "Virtual card", value: 24, color: "#38D7CF" },
+  { label: "Wire", value: 16, color: "#7B46FF" },
   { label: "Other", value: 8, color: "#FFB444" }
 ];
 
@@ -54,30 +54,30 @@ const listSegments = ["All", "Paid", "Pending", "Upcoming"] as const;
 
 const paymentList = [
   {
-    id: "PAY-2080",
-    name: "Aurora Logistics",
-    amount: "$12,400",
+    id: "PAY-4810",
+    name: "Okta Enterprise",
+    amount: "$14,200",
     due: "Sep 6, 2024",
     status: "Pending"
   },
   {
-    id: "PAY-2079",
-    name: "Nimbus Maintenance",
-    amount: "$8,920",
+    id: "PAY-4809",
+    name: "Jamf Pro licenses",
+    amount: "$6,420",
     due: "Sep 2, 2024",
     status: "Upcoming"
   },
   {
-    id: "PAY-2078",
-    name: "Field deployment",
-    amount: "$16,200",
+    id: "PAY-4805",
+    name: "Cisco SmartNet",
+    amount: "$18,600",
     due: "Aug 31, 2024",
     status: "Paid"
   },
   {
-    id: "PAY-2075",
-    name: "Vision Fleet Renewal",
-    amount: "$24,800",
+    id: "PAY-4802",
+    name: "Azure consumption",
+    amount: "$31,180",
     due: "Aug 22, 2024",
     status: "Paid"
   }
@@ -97,7 +97,7 @@ const PaymentsPage = () => {
       <div>
         <h1 className="text-3xl font-semibold text-text-primary">Payments</h1>
         <p className="mt-2 text-sm text-text-secondary">
-          Visualize payment performance, cash flow balance, and upcoming commitments.
+          Visualize IT payment performance, cash flow balance, and upcoming renewals.
         </p>
       </div>
 

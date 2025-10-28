@@ -18,58 +18,58 @@ type Asset = {
 
 const assets: Asset[] = [
   {
-    id: "AST-1001",
-    name: "XR-200 Conveyor",
-    type: "Logistics",
+    id: "AST-4010",
+    name: "ThinkPad P14 Gen3",
+    type: "Endpoint",
     status: "Active",
-    lastService: "Aug 21, 2024",
-    value: "$34,500",
-    location: "Austin DC",
-    serial: "XR200-8891",
-    health: 92
+    lastService: "Aug 27, 2024",
+    value: "$1,850",
+    location: "Austin HQ",
+    serial: "P14-8891",
+    health: 97
   },
   {
-    id: "AST-1005",
-    name: "Spectra Scanner",
-    type: "Quality Assurance",
+    id: "AST-4024",
+    name: "Dell PowerEdge R750",
+    type: "Infrastructure",
     status: "Maintenance",
-    lastService: "Aug 5, 2024",
-    value: "$18,900",
-    location: "Denver QA Lab",
-    serial: "SCN-5124",
+    lastService: "Aug 10, 2024",
+    value: "$12,400",
+    location: "Denver DC",
+    serial: "R750-5124",
     health: 68
   },
   {
-    id: "AST-1014",
-    name: "Aurora Pods",
-    type: "Field Device",
+    id: "AST-4051",
+    name: "Meraki MX105 Appliance",
+    type: "Network",
     status: "Active",
     lastService: "Jul 30, 2024",
-    value: "$12,400",
-    location: "Remote Teams",
-    serial: "AP-9932",
-    health: 86
+    value: "$6,800",
+    location: "Remote Edge",
+    serial: "MX105-9932",
+    health: 88
   },
   {
-    id: "AST-1021",
-    name: "Vision Fleet",
-    type: "Fleet Services",
+    id: "AST-4093",
+    name: "MacBook Air M3",
+    type: "Endpoint",
     status: "Returned",
-    lastService: "Jun 11, 2024",
-    value: "$56,200",
+    lastService: "Jun 18, 2024",
+    value: "$1,650",
     location: "Houston Hub",
-    serial: "VF-2811",
+    serial: "MBA3-2811",
     health: 74
   },
   {
-    id: "AST-1025",
-    name: "Nimbus Drone",
-    type: "Inspection",
+    id: "AST-4120",
+    name: "Okta SSO Licenses",
+    type: "SaaS",
     status: "Active",
     lastService: "Aug 16, 2024",
-    value: "$21,750",
-    location: "NYC Ops",
-    serial: "ND-0071",
+    value: "$4,320",
+    location: "Global",
+    serial: "OKTA-0071",
     health: 95
   }
 ];
@@ -102,7 +102,7 @@ const AssetsPage = () => {
         <div>
           <h1 className="text-3xl font-semibold text-text-primary">Assets</h1>
           <p className="mt-2 text-sm text-text-secondary">
-            Monitor asset performance, deployment locations, and service timelines.
+            Monitor device fleets, deployments, and service timelines across your IT estate.
           </p>
         </div>
         <button className="rounded-full bg-gradient-to-r from-accent-secondary to-accent-primary px-6 py-3 text-sm font-semibold text-white shadow-glass transition hover:shadow-xl">
@@ -200,7 +200,7 @@ const AssetDetails = ({ asset }: AssetDetailsProps) => {
   return (
     <GlassCard className="flex flex-col gap-6 rounded-3xl p-8">
       <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-text-secondary">Asset Detail</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-text-secondary">IT Asset Detail</p>
         <h2 className="mt-3 text-2xl font-semibold text-text-primary">{asset.name}</h2>
         <p className="text-sm text-text-secondary">{asset.id}</p>
       </div>

@@ -15,46 +15,46 @@ type DocumentItem = {
 
 const invoices: DocumentItem[] = [
   {
-    id: "INV-1048",
+    id: "INV-5421",
     date: "Aug 22, 2024",
-    amount: "$18,240",
+    amount: "$14,200",
     status: "Paid",
-    reference: "Asset leasing - Q3",
+    reference: "SaaS renewals - Q3 bundle",
     description: "Settled via ACH - Ref #ACH-2213"
   },
   {
-    id: "INV-1049",
+    id: "INV-5428",
     date: "Aug 28, 2024",
-    amount: "$12,890",
+    amount: "$18,640",
     status: "Pending",
-    reference: "Maintenance package",
+    reference: "Endpoint lifecycle services",
     description: "Awaiting approval - Due in 5 days"
   },
   {
-    id: "INV-1053",
+    id: "INV-5436",
     date: "Sep 2, 2024",
     amount: "$26,400",
     status: "Overdue",
-    reference: "Field deployment rollout",
+    reference: "Network hardware refresh",
     description: "3 days past due - Late fee applies Sep 7"
   }
 ];
 
 const challans: DocumentItem[] = [
   {
-    id: "DC-2201",
+    id: "DC-9810",
     date: "Aug 18, 2024",
-    amount: "6 pallets",
+    amount: "24 devices",
     status: "Paid",
-    reference: "Vision Fleet delivery",
+    reference: "Endpoint deployment for Sales",
     description: "Signed by Alex Morgan - Received 10:30 AM"
   },
   {
-    id: "DC-2202",
+    id: "DC-9816",
     date: "Aug 29, 2024",
-    amount: "12 units",
+    amount: "18 racks",
     status: "Pending",
-    reference: "Nimbus drone replenishment",
+    reference: "Data center networking wave 2",
     description: "Awaiting confirmation at Houston Hub"
   }
 ];
@@ -89,9 +89,9 @@ const InvoicesPage = () => {
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold text-text-primary">Invoices & Delivery Challans</h1>
+          <h1 className="text-3xl font-semibold text-text-primary">IT Billing & Delivery</h1>
           <p className="mt-2 text-sm text-text-secondary">
-            Track billing documents, their statuses, and historical delivery milestones.
+            Track IT billing documents, their statuses, and historical delivery milestones.
           </p>
         </div>
         <div className="flex items-center gap-3 rounded-full bg-white/60 px-3 py-2 shadow-glass-sm">
@@ -180,21 +180,21 @@ const DocumentCard = ({ item }: { item: DocumentItem }) => (
 
 const timelineEvents = [
   {
-    title: "Invoice #1048 settled",
+    title: "Invoice #5421 settled",
     date: "Aug 22, 2024",
-    description: "Payment confirmed via Aurora Treasury.",
+    description: "Payment confirmed for SaaS renewals.",
     tone: "success"
   },
   {
-    title: "Delivery challan #2201 signed",
+    title: "Delivery challan #9810 signed",
     date: "Aug 18, 2024",
-    description: "Asset deployment completed at Austin DC.",
+    description: "Endpoint rollout completed for Sales division.",
     tone: "info"
   },
   {
-    title: "Reminder issued for invoice #1053",
+    title: "Reminder issued for invoice #5436",
     date: "Sep 4, 2024",
-    description: "Automated reminder sent to finance contact.",
+    description: "Automated reminder sent to IT finance approver.",
     tone: "warning"
   }
 ] as const;

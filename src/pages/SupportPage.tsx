@@ -3,10 +3,10 @@ import GlassCard from "../components/ui/GlassCard";
 const SupportPage = () => (
   <div className="space-y-10">
     <div>
-      <h1 className="text-3xl font-semibold text-text-primary">Support</h1>
+      <h1 className="text-3xl font-semibold text-text-primary">IT Support</h1>
       <p className="mt-2 text-sm text-text-secondary">
-        Reach the Aurora support team, raise tickets, and manage asset return workflows from a
-        single, elegant workspace.
+        Reach the Aurora IT team, raise tickets, and manage device return workflows from a single,
+        elegant workspace.
       </p>
     </div>
 
@@ -14,7 +14,7 @@ const SupportPage = () => (
       <GlassCard className="rounded-3xl p-8">
         <h2 className="text-lg font-semibold text-text-primary">Contact Support</h2>
         <p className="mt-3 text-sm text-text-secondary">
-          Connect instantly via chat or schedule a callback with a success specialist.
+          Connect instantly via chat or schedule a callback with an IT success specialist.
         </p>
         <div className="mt-6 grid gap-3">
           <button className="rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm hover:shadow-xl">
@@ -54,9 +54,9 @@ const SupportPage = () => (
       </GlassCard>
 
       <GlassCard className="rounded-3xl p-8">
-        <h2 className="text-lg font-semibold text-text-primary">Raise Ticket</h2>
+        <h2 className="text-lg font-semibold text-text-primary">Raise IT Ticket</h2>
         <p className="mt-3 text-sm text-text-secondary">
-          Follow the guided flow to submit a case with relevant context and attachments.
+          Follow the guided flow to submit IT incidents with relevant context and attachments.
         </p>
         <div className="mt-6 flex items-center gap-3">
           {["Issue", "Details", "Confirm"].map((step, index) => (
@@ -72,9 +72,9 @@ const SupportPage = () => (
           <div>
             <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Issue type</label>
             <select className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60">
-              <option>Platform access</option>
-              <option>Payment & billing</option>
-              <option>Asset maintenance</option>
+              <option>Endpoint access</option>
+              <option>Network connectivity</option>
+              <option>Software licensing</option>
               <option>Other</option>
             </select>
           </div>
@@ -101,7 +101,7 @@ const SupportPage = () => (
             />
           </div>
           <div className="rounded-2xl border border-dashed border-white/70 bg-white/40 px-4 py-6 text-center text-text-secondary">
-            <p>Drag & drop files or browse</p>
+            <p>Drag & drop network diagrams, logs, or screenshots</p>
             <p className="text-xs text-text-secondary/70">PDF, DOCX, PNG up to 15MB</p>
           </div>
           <button className="w-full rounded-full bg-gradient-to-r from-accent-secondary to-accent-primary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm">
@@ -111,17 +111,17 @@ const SupportPage = () => (
       </GlassCard>
 
       <GlassCard className="rounded-3xl p-8">
-        <h2 className="text-lg font-semibold text-text-primary">Return Asset</h2>
+        <h2 className="text-lg font-semibold text-text-primary">Return IT Asset</h2>
         <p className="mt-3 text-sm text-text-secondary">
-          Initiate asset collection with integrated logistics scheduling.
+          Initiate device collection with integrated logistics scheduling.
         </p>
         <form className="mt-6 space-y-5 text-sm">
           <div>
             <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Asset</label>
             <select className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60">
-              <option>XR-200 Conveyor</option>
-              <option>Spectra Scanner</option>
-              <option>Nimbus Drone</option>
+              <option>ThinkPad P14 Gen3</option>
+              <option>Meraki MX105 Appliance</option>
+              <option>MacBook Air M3</option>
             </select>
           </div>
           <div>
@@ -133,7 +133,7 @@ const SupportPage = () => (
             />
           </div>
           <div className="rounded-2xl border border-dashed border-white/70 bg-white/40 px-4 py-6 text-center text-text-secondary">
-            <p>Upload inspection photos</p>
+            <p>Upload inspection photos or device diagnostics</p>
             <p className="text-xs text-text-secondary/70">PNG, JPG up to 10MB</p>
           </div>
           <button className="w-full rounded-full bg-gradient-to-r from-accent-primary to-accent-tertiary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm">
@@ -144,7 +144,7 @@ const SupportPage = () => (
     </section>
 
     <GlassCard className="rounded-3xl p-8">
-      <h2 className="text-lg font-semibold text-text-primary">Support History</h2>
+        <h2 className="text-lg font-semibold text-text-primary">IT Support History</h2>
       <div className="mt-6 space-y-6 border-l border-white/40 pl-6 text-sm text-text-secondary">
         {supportEvents.map((event) => (
           <div key={event.title} className="relative pl-4">
@@ -167,21 +167,21 @@ const SupportPage = () => (
 
 const supportEvents = [
   {
-    title: "Ticket #3420 resolved",
+    title: "Ticket #8623 resolved",
     date: "Sep 1, 2024",
-    description: "Response time 1h 24m - Resolved by Maya (Tier 2)",
+    description: "VPN latency investigation closed by Tier 2 Networking.",
     icon: "OK"
   },
   {
-    title: "Asset return scheduled",
+    title: "Laptop return scheduled",
     date: "Aug 25, 2024",
-    description: "XR-200 pick-up confirmed for Aug 28, 2024 at 09:00 AM.",
+    description: "ThinkPad pickup confirmed for Aug 28, 2024 at 09:00 AM.",
     icon: "RT"
   },
   {
-    title: "New guidance shared",
+    title: "New MDM policy shared",
     date: "Aug 18, 2024",
-    description: "Sent documentation on API access scopes and audit logging.",
+    description: "Distributed guidance on least-privileged app access for macOS fleet.",
     icon: "IN"
   }
 ] as const;

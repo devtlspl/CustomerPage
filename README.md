@@ -1,11 +1,11 @@
 # Customer Dashboard (Aurora Client Portal)
 
-High-end customer portal built with React, TypeScript, Vite, and Tailwind CSS. Delivers a futuristic glassmorphism aesthetic for managing assets, invoices, payments, and support workflows.
+High-end IT asset portal built with React, TypeScript, Vite, and Tailwind CSS. Delivers a futuristic glassmorphism aesthetic for managing device fleets, software subscriptions, billing, and IT support workflows.
 
 ## Key Features
 - **Premium UI shell:** Frosted sidebar navigation, translucent top bar, responsive layout with micro-interactions.
 - **Dashboard insights:** Hero welcome panel, stat cards with sparklines, trend and distribution charts, activity timeline.
-- **Assets management:** Filterable table, status pills, and contextual detail drawer.
+- **IT asset management:** Filterable table, status pills, and contextual detail drawer across laptops, networking gear, and SaaS.
 - **Invoices & delivery challans:** Dual-tab view with cards, status chips, and historical timeline.
 - **Payments analytics:** Summary cards, bar/donut charts, and segmented tracker list.
 - **Support hub:** Contact options, guided ticket workflow, asset return form, and history timeline.
