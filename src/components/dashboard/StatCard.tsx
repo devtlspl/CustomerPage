@@ -50,7 +50,10 @@ const StatCard = ({ label, value, change, trend, accent, sparkline }: StatCardPr
   </GlassCard>
 );
 
-type SparklineProps = Pick<StatCardProps, "sparkline" | "accent">;
+type SparklineProps = {
+  data: number[];
+  accent: StatCardProps["accent"];
+};
 
 const Sparkline = ({ data, accent }: SparklineProps) => {
   const max = Math.max(...data);
@@ -61,9 +64,9 @@ const Sparkline = ({ data, accent }: SparklineProps) => {
     tertiary: { start: "#7B46FF", end: "#38D7CF" }
   }[accent];
   const points = data
-    .map((value, index) => {
-      const x = (index / (data.length - 1)) * 70;
-      const y = ((value - min) / (max - min || 1)) * 24;
+    .map((value: number, index: number) => {
+      const x = data.length <= 1 ? 0 : (index / (data.length - 1)) * 70;
+      const y = max === min ? 12 : ((value - min) / (max - min)) * 24;
       return `${x},${24 - y}`;
     })
     .join(" ");
