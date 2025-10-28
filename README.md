@@ -8,7 +8,7 @@ High-end IT asset portal built with React, TypeScript, Vite, and Tailwind CSS. D
 - **IT asset management:** Filterable table, status pills, and contextual detail drawer across laptops, networking gear, and SaaS.
 - **Invoices & delivery challans:** Dual-tab view with cards, status chips, and historical timeline.
 - **Payments analytics:** Summary cards, bar/donut charts, and segmented tracker list.
-- **Support hub:** Contact options, guided ticket workflow, asset return form, and history timeline.
+- **Support hub:** Contact options, guided ticket workflow, device return form, and history timeline.
 
 ## Getting Started
 
@@ -43,6 +43,7 @@ src/
 - Replace mock data in each page with real API integrations or state management.
 
 ## Scripts
-- `npm run dev` – Start Vite dev server.
-- `npm run build` – Type-check and build for production.
-- `npm run preview` – Preview built assets locally.
+- `npm run dev` - Start Vite dev server.
+- `npm run build` - Type-check and build for production.
+- `npm run preview` - Preview built assets locally.
+- `powershell -ExecutionPolicy Bypass -File ./deploy.ps1` - Build and push `dist/` to `gh-pages` (Windows).
