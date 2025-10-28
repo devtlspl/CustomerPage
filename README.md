@@ -48,6 +48,8 @@ src/
 - `npm run preview` - Preview built assets locally.
 - `powershell -ExecutionPolicy Bypass -File ./deploy.ps1` - Build and push `dist/` to `gh-pages` (Windows).
 
+During `npm run build`, a `postbuild` step copies `dist/index.html` to `dist/404.html` so direct links to routes keep working on GitHub Pages.
+
 ## Automated Deployment
 A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and publishes the site whenever you push to the `main` branch:
 1. Push commits to `main`.
