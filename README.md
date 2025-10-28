@@ -47,3 +47,9 @@ src/
 - `npm run build` - Type-check and build for production.
 - `npm run preview` - Preview built assets locally.
 - `powershell -ExecutionPolicy Bypass -File ./deploy.ps1` - Build and push `dist/` to `gh-pages` (Windows).
+
+## Automated Deployment
+A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and publishes the site whenever you push to the `main` branch:
+1. Push commits to `main`.
+2. The workflow installs dependencies, runs `npm run build`, uploads the `dist/` artifact, and deploys it to GitHub Pages.
+3. In your repository settings, set **Pages** → **Build and deployment** → **Source = GitHub Actions** the first time to activate the workflow output.
