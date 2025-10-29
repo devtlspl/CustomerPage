@@ -2,6 +2,14 @@
 
 High-end IT asset portal built with React, TypeScript, Vite, and Tailwind CSS. Delivers a futuristic glassmorphism aesthetic for managing device fleets, software subscriptions, billing, and IT support workflows.
 
+## Repository
+- Repo name: `SVX-WEB-25-002`
+- If you renamed the project recently, point your local clone at the new remote:
+  ```bash
+  git remote set-url origin git@github.com:<your-org-or-user>/SVX-WEB-25-002.git
+  ```
+- GitHub Pages will publish to `https://<your-org-or-user>.github.io/SVX-WEB-25-002/` once the workflow runs.
+
 ## Key Features
 - **Premium UI shell:** Frosted sidebar navigation, translucent top bar, responsive layout with micro-interactions.
 - **Dashboard insights:** Hero welcome panel, stat cards with sparklines, trend and distribution charts, activity timeline.
@@ -47,6 +55,10 @@ src/
 - `npm run build` - Type-check and build for production.
 - `npm run preview` - Preview built assets locally.
 - `powershell -ExecutionPolicy Bypass -File ./deploy.ps1` - Build and push `dist/` to `gh-pages` (Windows).
+- If you renamed the repo locally, point your remote to `SVX-WEB-25-002` before deploying:
+  ```bash
+  git remote set-url origin git@github.com:<your-org-or-user>/SVX-WEB-25-002.git
+  ```
 
 During `npm run build`, a `postbuild` step copies `dist/index.html` to `dist/404.html` so direct links to routes keep working on GitHub Pages.
 
