@@ -85,36 +85,31 @@ const activities = [
 
 const DashboardPage = () => (
   <div className="space-y-12">
-    <GlassCard className="rounded-3xl p-8 md:p-12">
+    <GlassCard className="p-6 md:p-8">
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.4em] text-text-secondary">Welcome back</p>
-          <h1 className="mt-3 text-4xl font-semibold text-text-primary">Alex!</h1>
-          <p className="mt-4 max-w-xl text-base text-text-secondary">
-            Your IT estate is running smoothly this quarter. Review the insights below to stay
-            ahead of device refreshes, renewal spend, and support demand.
+          <p className="text-sm uppercase tracking-wide text-slate-500">Welcome back</p>
+          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Alex</h1>
+          <p className="mt-3 max-w-xl text-sm text-slate-600">
+            Review the latest device usage, renewal spend, and support activity to keep your teams
+            on track. These quick insights highlight what needs attention first.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button className="rounded-full bg-gradient-to-r from-accent-primary to-accent-tertiary px-6 py-3 text-sm font-semibold text-white shadow-glass transition hover:shadow-xl">
-              Manage Assets
+            <button className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">
+              Manage assets
             </button>
-            <button className="rounded-full border border-white/60 px-6 py-3 text-sm font-semibold text-text-primary backdrop-blur hover:bg-white/50">
-              View Payments
+            <button className="rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+              View payments
             </button>
           </div>
         </div>
-        <div className="relative w-full max-w-sm">
-          <span className="absolute -inset-6 rounded-[36px] bg-gradient-to-br from-accent-primary/40 to-accent-tertiary/40 blur-[50px]" />
-          <GlassCard className="relative rounded-[36px] bg-white/50 p-8 text-center">
-            <p className="text-sm uppercase tracking-[0.3em] text-text-secondary">
-              Asset Utilization
-            </p>
-            <p className="mt-4 text-5xl font-semibold text-text-primary">86%</p>
-            <p className="mt-3 text-sm text-text-secondary">
-              +8% vs last quarter. Optimal usage maintained across all regions.
-            </p>
-          </GlassCard>
-        </div>
+        <GlassCard className="w-full max-w-sm border-slate-200 p-6 text-center">
+          <p className="text-xs uppercase tracking-wide text-slate-500">Asset utilization</p>
+          <p className="mt-3 text-4xl font-semibold text-slate-900">86%</p>
+          <p className="mt-2 text-sm text-slate-600">
+            Up 8% since last quarter across all regions.
+          </p>
+        </GlassCard>
       </div>
     </GlassCard>
 

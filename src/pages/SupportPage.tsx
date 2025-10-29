@@ -1,169 +1,141 @@
+import { Fragment, ReactNode, useMemo, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import GlassCard from "../components/ui/GlassCard";
 
-const SupportPage = () => (
-  <div className="space-y-10">
-    <div>
-      <h1 className="text-3xl font-semibold text-text-primary">IT Support</h1>
-      <p className="mt-2 text-sm text-text-secondary">
-        Reach the Aurora IT team, raise tickets, and manage device return workflows from a single,
-        elegant workspace.
-      </p>
-    </div>
+type SupportAsset = {
+  id: string;
+  name: string;
+  serial: string;
+  type: string;
+};
 
-    <section className="grid gap-6 xl:grid-cols-3">
-      <GlassCard className="rounded-3xl p-8">
-        <h2 className="text-lg font-semibold text-text-primary">Contact Support</h2>
-        <p className="mt-3 text-sm text-text-secondary">
-          Connect instantly via chat or schedule a callback with an IT success specialist.
-        </p>
-        <div className="mt-6 grid gap-3">
-          <button className="rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm hover:shadow-xl">
-            Live chat now
-          </button>
-          <button className="rounded-full border border-white/60 px-5 py-3 text-sm font-semibold text-text-primary hover:bg-white/60">
-            Email support
-          </button>
-          <button className="rounded-full border border-white/60 px-5 py-3 text-sm font-semibold text-text-primary hover:bg-white/60">
-            Schedule a call
-          </button>
-        </div>
-        <form className="mt-8 space-y-4 text-sm">
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Subject</label>
-            <input
-              type="text"
-              className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60"
-              placeholder="Quick summary"
-            />
-          </div>
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Message</label>
-            <textarea
-              rows={4}
-              className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60"
-              placeholder="How can we help today?"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full rounded-full bg-gradient-to-r from-accent-primary to-accent-tertiary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm"
-          >
-            Send
-          </button>
-        </form>
-      </GlassCard>
+const supportAssets: SupportAsset[] = [
+  { id: "AST-4010", name: "ThinkPad P14 Gen3", serial: "P14-8891", type: "Endpoint" },
+  { id: "AST-4051", name: "Meraki MX105 Appliance", serial: "MX105-9932", type: "Network" },
+  { id: "AST-4093", name: "MacBook Air M3", serial: "MBA3-2811", type: "Endpoint" },
+  { id: "AST-4120", name: "Okta SSO Licenses", serial: "OKTA-0071", type: "SaaS" }
+];
 
-      <GlassCard className="rounded-3xl p-8">
-        <h2 className="text-lg font-semibold text-text-primary">Raise IT Ticket</h2>
-        <p className="mt-3 text-sm text-text-secondary">
-          Follow the guided flow to submit IT incidents with relevant context and attachments.
+const supportActions = [
+  {
+    type: "contact" as const,
+    title: "Contact support",
+    description: "Reach the service desk through your preferred channel.",
+    points: ["Start a live chat session", "Email our success engineers", "Book a callback time"],
+    cta: "Open contact form"
+  },
+  {
+    type: "ticket" as const,
+    title: "Raise IT ticket",
+    description: "Log incidents tied to your rental or sale assets.",
+    points: ["Associate tickets with catalogued assets", "Auto-fill serial numbers", "Attach diagnostics for faster resolution"],
+    cta: "Start ticket workflow"
+  },
+  {
+    type: "return" as const,
+    title: "Return IT asset",
+    description: "Schedule logistics for rental returns or replacements.",
+    points: ["Select the asset to collect", "Describe the return reason", "Upload inspection photos"],
+    cta: "Arrange pickup"
+  }
+] as const;
+
+const SupportPage = () => {
+  const [activeModal, setActiveModal] = useState<"contact" | "ticket" | "return" | null>(null);
+  const [selectedAssetId, setSelectedAssetId] = useState<string>("");
+  const selectedAsset = useMemo(
+    () => supportAssets.find((asset) => asset.id === selectedAssetId),
+    [selectedAssetId]
+  );
+
+  const closeModal = () => setActiveModal(null);
+
+  return (
+    <div className="space-y-10">
+      <div>
+        <h1 className="text-2xl font-semibold text-slate-900">IT support</h1>
+        <p className="mt-2 text-sm text-slate-600">
+          Reach our team, open tickets, or arrange device returns without leaving this page.
         </p>
-        <div className="mt-6 flex items-center gap-3">
-          {["Issue", "Details", "Confirm"].map((step, index) => (
-            <div key={step} className="flex flex-col items-center gap-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-accent-secondary to-accent-primary text-sm font-semibold text-white">
-                {index + 1}
+      </div>
+
+      <section className="grid gap-6 xl:grid-cols-3">
+        {supportActions.map((action) => (
+          <GlassCard key={action.type} className="flex flex-col justify-between rounded-lg p-6">
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">{action.title}</h2>
+                <p className="mt-2 text-sm text-slate-600">{action.description}</p>
+              </div>
+              <ul className="space-y-2 text-sm text-slate-600">
+                {action.points.map((point) => (
+                  <li key={point} className="flex items-start gap-2">
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-400" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <button
+              className="mt-6 w-full rounded-md bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800"
+              onClick={() => setActiveModal(action.type)}
+            >
+              {action.cta}
+            </button>
+          </GlassCard>
+        ))}
+      </section>
+
+      <GlassCard className="rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-slate-900">IT support history</h2>
+        <div className="mt-6 space-y-4 border-l border-slate-200 pl-6 text-sm text-slate-600">
+          {supportEvents.map((event) => (
+            <div key={event.title} className="relative pl-4">
+              <span className="absolute -left-8 top-1 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 text-xs font-semibold uppercase tracking-wide text-white">
+                {event.icon}
               </span>
-              <p className="text-xs uppercase tracking-[0.2em] text-text-secondary">{step}</p>
+              <p className="text-sm font-semibold text-slate-900">{event.title}</p>
+              <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">{event.date}</p>
+              <p className="mt-2 text-sm">{event.description}</p>
             </div>
           ))}
         </div>
-        <form className="mt-8 space-y-5 text-sm">
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Issue type</label>
-            <select className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60">
-              <option>Endpoint access</option>
-              <option>Network connectivity</option>
-              <option>Software licensing</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Priority</label>
-            <div className="mt-3 flex gap-2">
-              {["Low", "Normal", "High"].map((level) => (
-                <button
-                  key={level}
-                  type="button"
-                  className="rounded-full border border-white/70 px-4 py-2 text-xs font-semibold text-text-secondary hover:bg-white/60"
-                >
-                  {level}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Description</label>
-            <textarea
-              rows={3}
-              className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60"
-              placeholder="Provide as much detail as possible"
-            />
-          </div>
-          <div className="rounded-2xl border border-dashed border-white/70 bg-white/40 px-4 py-6 text-center text-text-secondary">
-            <p>Drag & drop network diagrams, logs, or screenshots</p>
-            <p className="text-xs text-text-secondary/70">PDF, DOCX, PNG up to 15MB</p>
-          </div>
-          <button className="w-full rounded-full bg-gradient-to-r from-accent-secondary to-accent-primary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm">
-            Review ticket
-          </button>
-        </form>
       </GlassCard>
 
-      <GlassCard className="rounded-3xl p-8">
-        <h2 className="text-lg font-semibold text-text-primary">Return IT Asset</h2>
-        <p className="mt-3 text-sm text-text-secondary">
-          Initiate device collection with integrated logistics scheduling.
-        </p>
-        <form className="mt-6 space-y-5 text-sm">
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Asset</label>
-            <select className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60">
-              <option>ThinkPad P14 Gen3</option>
-              <option>Meraki MX105 Appliance</option>
-              <option>MacBook Air M3</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs uppercase tracking-[0.2em] text-text-secondary">Reason</label>
-            <textarea
-              rows={3}
-              className="mt-2 w-full rounded-2xl bg-white/60 px-4 py-3 text-text-primary shadow-inner shadow-white/50 outline-none ring-1 ring-white/50 focus:ring-2 focus:ring-accent-primary/60"
-              placeholder="Explain the reason for return..."
-            />
-          </div>
-          <div className="rounded-2xl border border-dashed border-white/70 bg-white/40 px-4 py-6 text-center text-text-secondary">
-            <p>Upload inspection photos or device diagnostics</p>
-            <p className="text-xs text-text-secondary/70">PNG, JPG up to 10MB</p>
-          </div>
-          <button className="w-full rounded-full bg-gradient-to-r from-accent-primary to-accent-tertiary px-5 py-3 text-sm font-semibold text-white shadow-glass-sm">
-            Schedule pickup
-          </button>
-        </form>
-      </GlassCard>
-    </section>
+      <SupportModal
+        open={activeModal === "contact"}
+        onClose={closeModal}
+        title="Contact support"
+        description="Choose the fastest path to reach the Aurora support desk."
+      >
+        <ContactSupportForm />
+      </SupportModal>
 
-    <GlassCard className="rounded-3xl p-8">
-        <h2 className="text-lg font-semibold text-text-primary">IT Support History</h2>
-      <div className="mt-6 space-y-6 border-l border-white/40 pl-6 text-sm text-text-secondary">
-        {supportEvents.map((event) => (
-          <div key={event.title} className="relative pl-4">
-            <span
-              className="absolute -left-8 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-accent-primary to-accent-secondary text-white shadow-glass-sm"
-            >
-              {event.icon}
-            </span>
-            <p className="text-sm font-semibold text-text-primary">{event.title}</p>
-            <p className="mt-1 text-xs uppercase tracking-[0.2em] text-text-secondary/80">
-              {event.date}
-            </p>
-            <p className="mt-2 text-sm">{event.description}</p>
-          </div>
-        ))}
-      </div>
-    </GlassCard>
-  </div>
-);
+      <SupportModal
+        open={activeModal === "ticket"}
+        onClose={closeModal}
+        title="Raise IT ticket"
+        description="Log an incident against your registered assets so our engineers have full context."
+      >
+        <RaiseTicketForm
+          assets={supportAssets}
+          selectedAssetId={selectedAssetId}
+          onSelectAsset={setSelectedAssetId}
+          selectedAsset={selectedAsset}
+        />
+      </SupportModal>
+
+      <SupportModal
+        open={activeModal === "return"}
+        onClose={closeModal}
+        title="Return IT asset"
+        description="Schedule a pickup or swap for a rental asset. Logistics will confirm within 2 hours."
+      >
+        <ReturnAssetForm assets={supportAssets} />
+      </SupportModal>
+    </div>
+  );
+};
 
 const supportEvents = [
   {
@@ -187,3 +159,287 @@ const supportEvents = [
 ] as const;
 
 export default SupportPage;
+
+const priorityOptions = ["Low", "Normal", "High"] as const;
+
+type SupportModalProps = {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  description: string;
+  children: ReactNode;
+};
+
+const SupportModal = ({ open, onClose, title, description, children }: SupportModalProps) => (
+  <Transition.Root show={open} as={Fragment}>
+    <Dialog as="div" className="relative z-40" onClose={onClose}>
+      <Transition.Child
+        as={Fragment}
+        enter="ease-out duration-200"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="ease-in duration-150"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" />
+      </Transition.Child>
+
+      <div className="fixed inset-0 z-40 overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center px-4 py-10">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          >
+            <Dialog.Panel className="w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <Dialog.Title className="text-xl font-semibold text-slate-900">{title}</Dialog.Title>
+                  <Dialog.Description className="mt-1 text-sm text-slate-600">
+                    {description}
+                  </Dialog.Description>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="rounded-md border border-slate-300 px-3 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="mt-6">{children}</div>
+            </Dialog.Panel>
+          </Transition.Child>
+        </div>
+      </div>
+    </Dialog>
+  </Transition.Root>
+);
+
+const ContactSupportForm = () => (
+  <form className="space-y-5 text-sm">
+    <div className="grid gap-3 sm:grid-cols-2">
+      <div>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Full name
+        </label>
+        <input
+          type="text"
+          className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          placeholder="Alex Morgan"
+        />
+      </div>
+      <div>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Email
+        </label>
+        <input
+          type="email"
+          className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          placeholder="alex@aurora.com"
+        />
+      </div>
+    </div>
+    <div>
+      <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Subject</label>
+      <input
+        type="text"
+        className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        placeholder="Quick summary"
+      />
+    </div>
+    <div>
+      <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Message</label>
+      <textarea
+        rows={4}
+        className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        placeholder="How can we help today?"
+      />
+    </div>
+    <div className="flex flex-wrap gap-3">
+      <button className="rounded-md bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">
+        Start live chat
+      </button>
+      <button className="rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+        Email support
+      </button>
+      <button className="rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+        Schedule call
+      </button>
+    </div>
+  </form>
+);
+
+type RaiseTicketFormProps = {
+  assets: SupportAsset[];
+  selectedAssetId: string;
+  onSelectAsset: (id: string) => void;
+  selectedAsset?: SupportAsset;
+};
+
+const RaiseTicketForm = ({
+  assets,
+  selectedAssetId,
+  onSelectAsset,
+  selectedAsset
+}: RaiseTicketFormProps) => {
+  const [priority, setPriority] = useState<(typeof priorityOptions)[number]>("Normal");
+
+  return (
+    <form className="space-y-5 text-sm">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Issue type
+          </label>
+          <select className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200">
+            <option>Endpoint access</option>
+            <option>Network connectivity</option>
+            <option>Software licensing</option>
+            <option>Billing discrepancy</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Related asset
+          </label>
+          <select
+            value={selectedAssetId}
+            onChange={(event) => onSelectAsset(event.target.value)}
+            className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          >
+            <option value="">Select an asset</option>
+            {assets.map((asset) => (
+              <option key={asset.id} value={asset.id}>
+                {asset.name} · {asset.id}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Priority
+          </label>
+          <div className="mt-2 flex gap-2">
+            {priorityOptions.map((level) => {
+              const active = priority === level;
+              return (
+                <button
+                  key={level}
+                  type="button"
+                  onClick={() => setPriority(level)}
+                  className={`rounded-md border px-4 py-2 text-xs font-semibold transition ${
+                    active
+                      ? "border-slate-900 bg-slate-900 text-white"
+                      : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {level}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Asset serial (auto filled)
+          </label>
+          <input
+            type="text"
+            value={selectedAsset?.serial ?? ""}
+            readOnly
+            placeholder="Serial populates after you choose an asset"
+            className="mt-2 w-full rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-sm text-slate-700 focus:outline-none"
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Serial numbers stay in sync with the asset catalog.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Description
+        </label>
+        <textarea
+          rows={4}
+          className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          placeholder="Provide as much detail as possible"
+        />
+      </div>
+
+      <div className="rounded-md border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center text-slate-600">
+        <p>Attach logs, screenshots, or delivery challans</p>
+        <p className="text-xs text-slate-400">PDF, DOCX, PNG up to 15MB</p>
+      </div>
+
+      <div className="flex justify-end gap-3">
+        <button className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+          Save draft
+        </button>
+        <button className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+          Review ticket
+        </button>
+      </div>
+    </form>
+  );
+};
+
+type ReturnAssetFormProps = {
+  assets: SupportAsset[];
+};
+
+const ReturnAssetForm = ({ assets }: ReturnAssetFormProps) => (
+  <form className="space-y-5 text-sm">
+    <div className="grid gap-3 sm:grid-cols-2">
+      <div>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Asset</label>
+        <select className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200">
+          <option value="">Select asset to return</option>
+          {assets.map((asset) => (
+            <option key={asset.id} value={asset.id}>
+              {asset.name} · {asset.id}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Preferred pickup date
+        </label>
+        <input
+          type="date"
+          className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        />
+      </div>
+    </div>
+    <div>
+      <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Reason</label>
+      <textarea
+        rows={3}
+        className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        placeholder="Explain the reason for return..."
+      />
+    </div>
+    <div className="rounded-md border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center text-slate-600">
+      <p>Upload inspection photos or device diagnostics</p>
+      <p className="text-xs text-slate-400">PNG, JPG up to 10MB</p>
+    </div>
+    <div className="flex justify-end gap-3">
+      <button className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+        Save draft
+      </button>
+      <button className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+        Schedule pickup
+      </button>
+    </div>
+  </form>
+);

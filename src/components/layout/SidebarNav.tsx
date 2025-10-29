@@ -18,41 +18,10 @@ type SidebarNavProps = {
 const navigation = [
   { name: "Dashboard", to: "/dashboard", Icon: ChartBarIcon },
   { name: "Assets", to: "/assets", Icon: Squares2X2Icon },
-  { name: "Invoices & DC", to: "/documents", Icon: DocumentDuplicateIcon },
+  { name: "Documents", to: "/documents", Icon: DocumentDuplicateIcon },
   { name: "Payments", to: "/payments", Icon: WalletIcon },
   { name: "Support", to: "/support", Icon: LifebuoyIcon }
 ];
-
-const SidebarLink = ({ name, to, Icon }: (typeof navigation)[number]) => (
-  <NavLink
-    to={to}
-    className={({ isActive }) =>
-      clsx(
-        "group flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all",
-        "hover:bg-white/20 hover:shadow-glass-sm",
-        isActive
-          ? "bg-gradient-to-r from-accent-primary to-accent-secondary text-white shadow-glass"
-          : "text-text-secondary"
-      )
-    }
-  >
-    {({ isActive }) => (
-      <>
-        <span
-          className={clsx(
-            "flex h-9 w-9 items-center justify-center rounded-full transition-all",
-            isActive
-              ? "bg-white/20 text-white"
-              : "bg-white/30 text-accent-primary group-hover:bg-white/50"
-          )}
-        >
-          <Icon className="h-5 w-5" />
-        </span>
-        <span>{name}</span>
-      </>
-    )}
-  </NavLink>
-);
 
 const SidebarNav = ({ isOpen, onClose }: SidebarNavProps) => (
   <>
@@ -67,7 +36,7 @@ const SidebarNav = ({ isOpen, onClose }: SidebarNavProps) => (
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/40" />
+          <div className="fixed inset-0 bg-slate-900/45" />
         </Transition.Child>
 
         <div className="fixed inset-0 flex">
@@ -80,13 +49,8 @@ const SidebarNav = ({ isOpen, onClose }: SidebarNavProps) => (
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
-            <Dialog.Panel className="glass-panel relative m-4 flex w-72 flex-col gap-6 rounded-2xl p-6">
-              <Logo />
-              <nav className="flex flex-1 flex-col gap-2">
-                {navigation.map((item) => (
-                  <SidebarLink key={item.name} {...item} />
-                ))}
-              </nav>
+            <Dialog.Panel className="relative flex w-64 flex-col bg-white shadow-2xl">
+              <SidebarContent onLinkClick={onClose} />
             </Dialog.Panel>
           </Transition.Child>
         </div>
@@ -94,52 +58,82 @@ const SidebarNav = ({ isOpen, onClose }: SidebarNavProps) => (
     </Transition.Root>
 
     <aside
-      className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-72 lg:flex-col lg:gap-8 lg:bg-transparent"
+      className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-slate-200 lg:bg-white"
       aria-label="Sidebar"
     >
-      <div className="glass-panel m-6 flex flex-1 flex-col gap-8 rounded-2xl p-6">
-        <Logo />
-        <nav className="flex flex-1 flex-col gap-2">
-          {navigation.map((item) => (
-            <SidebarLink key={item.name} {...item} />
-          ))}
-        </nav>
-        <div className="rounded-2xl bg-gradient-to-br from-accent-secondary/20 to-accent-tertiary/30 p-4 text-xs text-text-secondary">
-          <p className="font-semibold text-text-primary">Need help?</p>
-          <p className="mt-1 leading-5">
-            Our success team is available 24/7 to assist with onboarding and custom
-            integrations.
-          </p>
-          <button className="mt-4 inline-flex items-center justify-center rounded-full bg-white/30 px-4 py-2 text-xs font-semibold text-accent-primary hover:bg-white/40">
-            Contact us
-          </button>
-        </div>
-      </div>
+      <SidebarContent />
     </aside>
   </>
 );
 
-const Logo = () => (
-  <div className="flex items-center gap-3">
-    <div className="relative flex h-11 w-11 items-center justify-center">
-      <span className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-accent-primary/70 to-accent-tertiary/70 blur-md" />
-      <span className="relative flex h-full w-full items-center justify-center rounded-2xl bg-white/50 backdrop-blur-22">
-        <svg
-          className="h-6 w-6 text-accent-primary"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-        >
+type SidebarContentProps = {
+  onLinkClick?: () => void;
+};
+
+const SidebarContent = ({ onLinkClick }: SidebarContentProps) => (
+  <div className="flex h-full flex-col">
+    <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
+      <div className="rounded-md bg-slate-900 p-2 text-white">
+        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
           <path d="M5 5h7l-2 6h6l-4 8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </span>
+      </div>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Aurora</p>
+        <p className="text-lg font-semibold text-slate-900">Customer Hub</p>
+      </div>
     </div>
-    <div>
-      <p className="text-sm font-semibold uppercase tracking-[0.32em] text-text-secondary">Aurora</p>
-      <p className="text-lg font-semibold text-text-primary">Client Portal</p>
+
+    <div className="flex-1 overflow-y-auto px-4 py-6">
+      <nav className="space-y-1">
+        {navigation.map((item) => (
+          <SidebarLink key={item.name} item={item} onLinkClick={onLinkClick} />
+        ))}
+      </nav>
+
+    </div>
+
+    <div className="border-t border-slate-200 px-5 py-4 text-xs text-slate-500">
+      <p className="font-semibold text-slate-700">Aurora support</p>
+      <p className="mt-1">support@aurora.com</p>
+      <p>+1 (800) 555-2199</p>
     </div>
   </div>
+);
+
+const SidebarLink = ({
+  item,
+  onLinkClick
+}: {
+  item: (typeof navigation)[number];
+  onLinkClick?: () => void;
+}) => (
+  <NavLink
+    to={item.to}
+    className={({ isActive }) =>
+      clsx(
+        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        isActive
+          ? "bg-slate-900 text-white"
+          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+      )
+    }
+    onClick={onLinkClick}
+  >
+    {({ isActive }) => (
+      <>
+        <span
+          className={clsx(
+            "flex h-9 w-9 items-center justify-center rounded-md text-sm transition-colors",
+            isActive ? "bg-slate-800 text-white" : "bg-slate-200 text-slate-600"
+          )}
+        >
+          <item.Icon className="h-5 w-5" />
+        </span>
+        <span>{item.name}</span>
+      </>
+    )}
+  </NavLink>
 );
 
 export default SidebarNav;

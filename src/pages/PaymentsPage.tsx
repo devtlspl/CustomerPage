@@ -17,20 +17,17 @@ const summaryCards = [
   {
     label: "Paid IT spend (Q3)",
     value: "$162,400",
-    descriptor: "27 disbursements",
-    accent: "from-accent-primary to-accent-tertiary"
+    descriptor: "27 disbursements"
   },
   {
     label: "Pending approvals",
     value: "$38,920",
-    descriptor: "6 invoices",
-    accent: "from-accent-secondary to-accent-primary"
+    descriptor: "6 invoices"
   },
   {
     label: "Upcoming renewals (14d)",
     value: "$24,300",
-    descriptor: "4 renewals",
-    accent: "from-warning to-danger"
+    descriptor: "4 renewals"
   }
 ];
 
@@ -84,9 +81,9 @@ const paymentList = [
 ] as const;
 
 const statusTone: Record<string, string> = {
-  Paid: "bg-success/15 text-success",
-  Pending: "bg-warning/15 text-warning",
-  Upcoming: "bg-accent-primary/15 text-accent-primary"
+  Paid: "bg-emerald-100 text-emerald-700",
+  Pending: "bg-amber-100 text-amber-700",
+  Upcoming: "bg-blue-100 text-blue-700"
 };
 
 const PaymentsPage = () => {
@@ -95,65 +92,54 @@ const PaymentsPage = () => {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-semibold text-text-primary">Payments</h1>
-        <p className="mt-2 text-sm text-text-secondary">
-          Visualize IT payment performance, cash flow balance, and upcoming renewals.
+        <h1 className="text-2xl font-semibold text-slate-900">Payments</h1>
+        <p className="mt-2 text-sm text-slate-600">
+          Track payment performance, upcoming renewals, and channel mix at a glance.
         </p>
       </div>
 
       <section className="grid gap-6 lg:grid-cols-3">
         {summaryCards.map((card) => (
-          <GlassCard
-            key={card.label}
-            className="rounded-3xl p-6 text-white"
-            style={{
-              background:
-                card.accent === "from-warning to-danger"
-                  ? "linear-gradient(135deg,#FFB444,#FF5C7A)"
-                  : card.accent.includes("accent-secondary")
-                  ? "linear-gradient(135deg,#38D7CF,#2F7BFE)"
-                  : "linear-gradient(135deg,#2F7BFE,#7B46FF)"
-            }}
-          >
-            <p className="text-xs uppercase tracking-[0.3em] text-white/70">{card.label}</p>
-            <p className="mt-4 text-3xl font-semibold">{card.value}</p>
-            <p className="mt-2 text-sm text-white/70">{card.descriptor}</p>
+          <GlassCard key={card.label} className="rounded-lg p-6">
+            <p className="text-xs uppercase tracking-wide text-slate-500">{card.label}</p>
+            <p className="mt-4 text-2xl font-semibold text-slate-900">{card.value}</p>
+            <p className="mt-2 text-sm text-slate-600">{card.descriptor}</p>
           </GlassCard>
         ))}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-        <GlassCard className="rounded-3xl p-6">
+        <GlassCard className="rounded-lg p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-text-primary">Monthly Payment Flow</h2>
-            <p className="text-xs uppercase tracking-[0.2em] text-text-secondary">USD (x1k)</p>
+            <h2 className="text-lg font-semibold text-slate-900">Monthly payment flow</h2>
+            <p className="text-xs uppercase tracking-wide text-slate-400">USD (x1k)</p>
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={barData} barSize={16} barGap={8}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(44,63,146,0.08)" />
-              <XAxis dataKey="month" stroke="#5B6380" tickLine={false} />
-              <YAxis stroke="#5B6380" tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+              <YAxis stroke="#94a3b8" tickLine={false} />
               <Tooltip
-                cursor={{ fill: "rgba(47,123,254,0.08)" }}
+                cursor={{ fill: "rgba(148, 163, 184, 0.15)" }}
                 contentStyle={{
-                  background: "rgba(255,255,255,0.92)",
-                  borderRadius: "16px",
-                  border: "1px solid rgba(255,255,255,0.3)",
-                  boxShadow: "0 10px 30px -15px rgba(44,63,146,0.3)"
+                  background: "#fff",
+                  borderRadius: "8px",
+                  border: "1px solid #cbd5f5",
+                  boxShadow: "0 10px 30px -20px rgba(15,23,42,0.3)"
                 }}
               />
               <Legend />
-              <Bar dataKey="paid" name="Paid" fill="#2F7BFE" radius={[8, 8, 8, 8]} />
-              <Bar dataKey="pending" name="Pending" fill="#38D7CF" radius={[8, 8, 8, 8]} />
-              <Bar dataKey="overdue" name="Overdue" fill="#FF5C7A" radius={[8, 8, 8, 8]} />
+              <Bar dataKey="paid" name="Paid" fill="#2563eb" radius={[6, 6, 6, 6]} />
+              <Bar dataKey="pending" name="Pending" fill="#0ea5e9" radius={[6, 6, 6, 6]} />
+              <Bar dataKey="overdue" name="Overdue" fill="#f97316" radius={[6, 6, 6, 6]} />
             </BarChart>
           </ResponsiveContainer>
         </GlassCard>
 
-        <GlassCard className="rounded-3xl p-6">
-          <h2 className="text-lg font-semibold text-text-primary">Payment Channels</h2>
+        <GlassCard className="rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-900">Payment channels</h2>
           <DistributionDonut data={paymentSegments} />
-          <div className="space-y-3 text-sm text-text-secondary">
+          <div className="space-y-3 text-sm text-slate-600">
             {paymentSegments.map((segmentItem) => (
               <div key={segmentItem.label} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -161,7 +147,7 @@ const PaymentsPage = () => {
                     className="h-3 w-3 rounded-full"
                     style={{ background: segmentItem.color }}
                   />
-                  <span className="font-medium text-text-primary">{segmentItem.label}</span>
+                  <span className="font-medium text-slate-900">{segmentItem.label}</span>
                 </div>
                 <span>{segmentItem.value}%</span>
               </div>
@@ -170,19 +156,19 @@ const PaymentsPage = () => {
         </GlassCard>
       </section>
 
-      <GlassCard className="rounded-3xl p-6">
+      <GlassCard className="rounded-lg p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-text-primary">Payment Tracker</h2>
-          <div className="rounded-full bg-white/60 p-1">
+          <h2 className="text-lg font-semibold text-slate-900">Payment tracker</h2>
+          <div className="flex gap-2">
             {listSegments.map((seg) => (
               <button
                 key={seg}
                 onClick={() => setSegment(seg)}
                 className={clsx(
-                  "rounded-full px-4 py-2 text-xs font-semibold transition",
+                  "rounded-md px-3 py-1.5 text-xs font-semibold transition",
                   segment === seg
-                    ? "bg-gradient-to-r from-accent-primary to-accent-secondary text-white shadow-glass-sm"
-                    : "text-text-secondary"
+                    ? "bg-slate-900 text-white"
+                    : "border border-slate-300 text-slate-600 hover:bg-slate-100"
                 )}
               >
                 {seg}
@@ -196,17 +182,20 @@ const PaymentsPage = () => {
             .map((item) => (
               <div
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/60 px-4 py-4 text-sm text-text-secondary shadow-glass-sm transition hover:bg-white"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-4 py-4 text-sm text-slate-600"
               >
                 <div>
-                  <p className="text-base font-semibold text-text-primary">{item.name}</p>
-                  <p className="text-xs uppercase tracking-[0.2em] text-text-secondary/80">
-                    {item.id}
-                  </p>
+                  <p className="text-base font-semibold text-slate-900">{item.name}</p>
+                  <p className="text-xs uppercase tracking-wide text-slate-400">{item.id}</p>
                 </div>
-                <p className="text-lg font-semibold text-text-primary">{item.amount}</p>
+                <p className="text-lg font-semibold text-slate-900">{item.amount}</p>
                 <p>Due {item.due}</p>
-                <span className={clsx("rounded-full px-3 py-1 text-xs font-semibold", statusTone[item.status])}>
+                <span
+                  className={clsx(
+                    "rounded-full px-3 py-1 text-xs font-semibold",
+                    statusTone[item.status]
+                  )}
+                >
                   {item.status}
                 </span>
               </div>

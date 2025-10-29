@@ -11,38 +11,38 @@ export type StatCardProps = {
 };
 
 const accentMap: Record<StatCardProps["accent"], string> = {
-  primary: "from-accent-primary to-accent-tertiary",
-  secondary: "from-accent-secondary to-accent-primary",
-  tertiary: "from-accent-tertiary to-accent-secondary"
+  primary: "text-blue-600",
+  secondary: "text-emerald-600",
+  tertiary: "text-purple-600"
 };
 
 const StatCard = ({ label, value, change, trend, accent, sparkline }: StatCardProps) => (
-  <GlassCard className="group flex flex-col gap-6 rounded-2xl p-6 transition hover:-translate-y-1 hover:shadow-xl">
+  <GlassCard className="flex flex-col gap-5 rounded-lg border-slate-200 p-5 hover:shadow-md">
     <div className="flex items-center justify-between">
-      <p className="text-sm font-medium uppercase tracking-[0.25em] text-text-secondary">{label}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
       <div
         className={clsx(
-          "flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md",
+          "flex h-10 w-10 items-center justify-center rounded-md bg-slate-100 text-sm font-semibold",
           accentMap[accent]
         )}
       >
-        <span className="text-lg font-semibold">*</span>
+        *
       </div>
     </div>
     <div className="flex items-end justify-between">
       <div>
-        <p className="text-3xl font-semibold text-text-primary">{value}</p>
+        <p className="text-2xl font-semibold text-slate-900">{value}</p>
         <p
           className={clsx(
-            "mt-2 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium",
+            "mt-1 text-xs font-medium",
             trend === "up"
-              ? "bg-success/10 text-success"
+              ? "text-emerald-600"
               : trend === "down"
-              ? "bg-danger/10 text-danger"
-              : "bg-text-secondary/10 text-text-secondary"
+              ? "text-red-600"
+              : "text-slate-500"
           )}
         >
-          <span>{change}</span>
+          {change}
         </p>
       </div>
       <Sparkline data={sparkline} accent={accent} />
@@ -59,9 +59,9 @@ const Sparkline = ({ data, accent }: SparklineProps) => {
   const max = Math.max(...data);
   const min = Math.min(...data);
   const accentColor = {
-    primary: { start: "#2F7BFE", end: "#7B46FF" },
-    secondary: { start: "#38D7CF", end: "#2F7BFE" },
-    tertiary: { start: "#7B46FF", end: "#38D7CF" }
+    primary: { start: "#2563eb", end: "#3b82f6" },
+    secondary: { start: "#059669", end: "#34d399" },
+    tertiary: { start: "#7c3aed", end: "#a855f7" }
   }[accent];
   const points = data
     .map((value: number, index: number) => {
@@ -83,11 +83,7 @@ const Sparkline = ({ data, accent }: SparklineProps) => {
         points={points}
         strokeWidth={2.5}
         fill="none"
-        className={clsx(
-          accent === "primary" && "stroke-accent-primary",
-          accent === "secondary" && "stroke-accent-secondary",
-          accent === "tertiary" && "stroke-accent-tertiary"
-        )}
+        stroke={accentColor.start}
         strokeLinecap="round"
       />
       <polygon points={`${points} 70,24 0,24`} fill={`url(#spark-${accent})`} />
