@@ -1,160 +1,109 @@
 import GlassCard from "../components/ui/GlassCard";
 import StatCard from "../components/dashboard/StatCard";
 import TrendLineChart from "../components/dashboard/TrendLineChart";
-import DistributionDonut from "../components/dashboard/DistributionDonut";
-import ActivityFeed from "../components/dashboard/ActivityFeed";
 
-const statCards = [
-  {
-    label: "Active Devices",
-    value: "1,248",
-    change: "+7% vs last month",
-    trend: "up" as const,
-    accent: "primary" as const,
-    sparkline: [900, 920, 940, 980, 1020, 1100, 1248]
-  },
-  {
-    label: "Open Support Tickets",
-    value: "14",
-    change: "-3 since last week",
-    trend: "down" as const,
-    accent: "secondary" as const,
-    sparkline: [22, 20, 19, 18, 16, 15, 14]
-  },
-  {
-    label: "Pending Renewal Spend",
-    value: "$58.4k",
-    change: "+$6.8k this quarter",
-    trend: "steady" as const,
-    accent: "tertiary" as const,
-    sparkline: [34, 36, 37, 41, 44, 52, 58]
-  },
-  {
-    label: "Devices Due Refresh",
-    value: "26",
-    change: "Next 30 days",
-    trend: "steady" as const,
-    accent: "primary" as const,
-    sparkline: [18, 19, 21, 23, 24, 25, 26]
-  }
+const metricCards = [
+  { label: "Rental assets live", value: "1,248", change: "Up 7% vs last month", trend: "up" as const },
+  { label: "Sale assets serviced", value: "312", change: "5 completed this week", trend: "steady" as const },
+  { label: "Pending tickets", value: "14", change: "Resolve within 2 days", trend: "down" as const }
 ];
 
 const trendData = [
-  { month: "Mar", value: 42000 },
-  { month: "Apr", value: 48500 },
-  { month: "May", value: 51200 },
-  { month: "Jun", value: 56000 },
-  { month: "Jul", value: 60500 },
-  { month: "Aug", value: 64800 },
-  { month: "Sep", value: 69200, projection: 73500 }
+  { month: "Apr", value: 38000 },
+  { month: "May", value: 41200 },
+  { month: "Jun", value: 44600 },
+  { month: "Jul", value: 47200 },
+  { month: "Aug", value: 50500 },
+  { month: "Sep", value: 53800 }
 ];
 
-const distributionData = [
-  { label: "Endpoints", value: 40, color: "#2F7BFE" },
-  { label: "Network", value: 25, color: "#38D7CF" },
-  { label: "SaaS Licenses", value: 20, color: "#7B46FF" },
-  { label: "Infrastructure", value: 15, color: "#FFB444" }
-];
-
-const activities = [
+const focusItems = [
   {
-    id: 1,
+    title: "Schedule September rental audits",
+    detail: "Audit the top 25 rental assets to confirm on-site condition before renewals."
+  },
+  {
+    title: "Review three expiring SLAs",
+    detail: "Network and security SLAs expire in 14 days—confirm extension or replacement."
+  },
+  {
+    title: "Sync with finance on invoices",
+    detail: "Match the latest delivery challans with invoices prior to month-end close."
+  }
+];
+
+const recentUpdates = [
+  {
     title: "Invoice #5421 paid",
-    description: "Payment of $14,200 for SaaS renewals cleared via ACH.",
     time: "2h ago",
-    tag: "INV",
-    tone: "success" as const
+    detail: "SaaS renewals cleared via ACH for Contoso Industries."
   },
   {
-    id: 2,
-    title: "Device swap completed",
-    description: "Laptop P14-221 reassigned to Engineering after diagnostics.",
-    time: "4h ago",
-    tag: "AST",
-    tone: "info" as const
-  },
-  {
-    id: 3,
-    title: "Ticket escalated",
-    description: "Support ticket #8623 (VPN latency) moved to Tier 2 networking.",
+    title: "Return pickup confirmed",
     time: "Yesterday",
-    tag: "SUP",
-    tone: "warning" as const
+    detail: "ThinkPad P14 scheduled for collection at Houston hub."
+  },
+  {
+    title: "Ticket #8635 assigned",
+    time: "Mon",
+    detail: "Network diagnostics escalated to Tier 2 for investigation."
   }
 ];
 
 const DashboardPage = () => (
-  <div className="space-y-12">
-    <GlassCard className="p-6 md:p-8">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-sm uppercase tracking-wide text-slate-500">Welcome back</p>
-          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Alex</h1>
-          <p className="mt-3 max-w-xl text-sm text-slate-600">
-            Review the latest device usage, renewal spend, and support activity to keep your teams
-            on track. These quick insights highlight what needs attention first.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button className="rounded-md bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">
-              Manage assets
-            </button>
-            <button className="rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
-              View payments
-            </button>
-          </div>
-        </div>
-        <GlassCard className="w-full max-w-sm border-slate-200 p-6 text-center">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Asset utilization</p>
-          <p className="mt-3 text-4xl font-semibold text-slate-900">86%</p>
-          <p className="mt-2 text-sm text-slate-600">
-            Up 8% since last quarter across all regions.
-          </p>
-        </GlassCard>
-      </div>
-    </GlassCard>
+  <div className="space-y-8">
+    <header className="space-y-2">
+      <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+      <p className="text-sm text-slate-600">
+        A concise view of rental and sale assets so you can prioritise today’s work without noise.
+      </p>
+    </header>
 
-    <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      {statCards.map((card) => (
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {metricCards.map((card) => (
         <StatCard key={card.label} {...card} />
       ))}
     </section>
 
-    <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-      <GlassCard className="rounded-3xl p-6">
+    <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <GlassCard className="rounded-lg p-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-text-primary">Asset Portfolio Trend</h2>
-          <div className="flex items-center gap-2 text-xs text-text-secondary">
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-accent-primary" />
-              Actual
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-full bg-accent-secondary" />
-              Projection
-            </span>
-          </div>
+          <h2 className="text-lg font-semibold text-slate-900">Asset spend trend</h2>
+          <span className="text-xs text-slate-500">Rolling 6 months</span>
         </div>
         <TrendLineChart data={trendData} />
       </GlassCard>
 
-      <GlassCard className="rounded-3xl p-6">
-        <h2 className="text-lg font-semibold text-text-primary">Revenue Distribution</h2>
-        <DistributionDonut data={distributionData} />
-        <div className="mt-4 space-y-3">
-          {distributionData.map((item) => (
-            <div key={item.label} className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full" style={{ background: item.color }} />
-                <span className="font-medium text-text-primary">{item.label}</span>
-              </div>
-              <span className="text-text-secondary">{item.value}%</span>
-            </div>
+      <GlassCard className="rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-slate-900">Today’s focus</h2>
+        <ul className="mt-4 space-y-3 text-sm text-slate-600">
+          {focusItems.map((item) => (
+            <li key={item.title} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+              <p className="font-semibold text-slate-900">{item.title}</p>
+              <p className="mt-1 text-sm text-slate-600">{item.detail}</p>
+            </li>
           ))}
-        </div>
+        </ul>
       </GlassCard>
     </section>
 
-    <ActivityFeed activities={activities} />
+    <GlassCard className="rounded-lg p-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-900">Recent updates</h2>
+        <button className="text-sm font-medium text-slate-600 hover:text-slate-900">View all</button>
+      </div>
+      <ul className="mt-4 space-y-3 text-sm text-slate-600">
+        {recentUpdates.map((update) => (
+          <li key={update.title} className="flex flex-col gap-1 rounded-md border border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-slate-900">{update.title}</p>
+              <p className="text-sm text-slate-600">{update.detail}</p>
+            </div>
+            <span className="text-xs uppercase tracking-wide text-slate-400">{update.time}</span>
+          </li>
+        ))}
+      </ul>
+    </GlassCard>
   </div>
 );
 
