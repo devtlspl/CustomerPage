@@ -1,78 +1,9 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import clsx from "clsx";
 import GlassCard from "../components/ui/GlassCard";
+import { fetchAssets, type Asset } from "../services/assetsService";
 
 type AssetStatus = "Active" | "Maintenance" | "Returned";
-
-type Asset = {
-  id: string;
-  name: string;
-  type: string;
-  status: AssetStatus;
-  lastService: string;
-  value: string;
-  location: string;
-  serial: string;
-  health: number;
-};
-
-const assets: Asset[] = [
-  {
-    id: "AST-4010",
-    name: "ThinkPad P14 Gen3",
-    type: "Endpoint",
-    status: "Active",
-    lastService: "Aug 27, 2024",
-    value: "$1,850",
-    location: "Austin HQ",
-    serial: "P14-8891",
-    health: 97
-  },
-  {
-    id: "AST-4024",
-    name: "Dell PowerEdge R750",
-    type: "Infrastructure",
-    status: "Maintenance",
-    lastService: "Aug 10, 2024",
-    value: "$12,400",
-    location: "Denver DC",
-    serial: "R750-5124",
-    health: 68
-  },
-  {
-    id: "AST-4051",
-    name: "Meraki MX105 Appliance",
-    type: "Network",
-    status: "Active",
-    lastService: "Jul 30, 2024",
-    value: "$6,800",
-    location: "Remote Edge",
-    serial: "MX105-9932",
-    health: 88
-  },
-  {
-    id: "AST-4093",
-    name: "MacBook Air M3",
-    type: "Endpoint",
-    status: "Returned",
-    lastService: "Jun 18, 2024",
-    value: "$1,650",
-    location: "Houston Hub",
-    serial: "MBA3-2811",
-    health: 74
-  },
-  {
-    id: "AST-4120",
-    name: "Okta SSO Licenses",
-    type: "SaaS",
-    status: "Active",
-    lastService: "Aug 16, 2024",
-    value: "$4,320",
-    location: "Global",
-    serial: "OKTA-0071",
-    health: 95
-  }
-];
 
 const statusStyles: Record<AssetStatus, string> = {
   Active: "bg-emerald-100 text-emerald-700",
@@ -88,12 +19,46 @@ const filterOptions: Array<{ label: string; value: AssetStatus | "All" }> = [
 ];
 
 const AssetsPage = () => {
+  const [assets, setAssets] = useState<Asset[]>([]);
   const [filter, setFilter] = useState<AssetStatus | "All">("All");
-  const [selected, setSelected] = useState<Asset | null>(assets[0]);
+  const [selected, setSelected] = useState<Asset | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const loadAssets = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchAssets();
+        if (active) {
+          const items = response.items ?? [];
+          setAssets(items);
+          setSelected(items[0] ?? null);
+        }
+      } catch (err) {
+        console.error("Failed to load assets", err);
+        if (active) {
+          setError("Unable to load assets from the server right now.");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadAssets();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filteredAssets = useMemo(
-    () => assets.filter((asset) => (filter === "All" ? true : asset.status === filter)),
-    [filter]
+    () =>
+      assets.filter((asset) => (filter === "All" ? true : asset.status === filter)),
+    [assets, filter]
   );
 
   return (
@@ -104,6 +69,7 @@ const AssetsPage = () => {
           <p className="mt-2 text-sm text-slate-600">
             Monitor deployments, service timelines, and hardware allocation in one place.
           </p>
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
         <button className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
           + Add asset
@@ -141,6 +107,20 @@ const AssetsPage = () => {
                 </tr>
               </thead>
               <tbody>
+                {loading && (
+                  <tr>
+                    <td className="px-6 py-5 text-sm text-slate-500" colSpan={6}>
+                      Loading assets…
+                    </td>
+                  </tr>
+                )}
+                {!loading && filteredAssets.length === 0 && (
+                  <tr>
+                    <td className="px-6 py-5 text-sm text-slate-500" colSpan={6}>
+                      No assets found for this filter.
+                    </td>
+                  </tr>
+                )}
                 {filteredAssets.map((asset) => {
                   const isActive = selected?.id === asset.id;
                   return (
@@ -178,7 +158,7 @@ const AssetsPage = () => {
             </table>
           </div>
         </GlassCard>
-        <AssetDetails asset={selected} />
+        <AssetDetails asset={selected} loading={loading} />
       </div>
     </div>
   );
@@ -186,9 +166,18 @@ const AssetsPage = () => {
 
 type AssetDetailsProps = {
   asset: Asset | null;
+  loading: boolean;
 };
 
-const AssetDetails = ({ asset }: AssetDetailsProps) => {
+const AssetDetails = ({ asset, loading }: AssetDetailsProps) => {
+  if (loading) {
+    return (
+      <GlassCard className="flex min-h-[420px] items-center justify-center p-10 text-slate-500">
+        Loading asset details…
+      </GlassCard>
+    );
+  }
+
   if (!asset) {
     return (
       <GlassCard className="flex min-h-[420px] items-center justify-center p-10 text-slate-500">

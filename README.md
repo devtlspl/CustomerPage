@@ -27,6 +27,14 @@ npm run dev
 
 Visit the URL reported by Vite (default: `http://localhost:5173`).
 
+### Backend API
+
+- Default API base URL: `http://localhost:7244`
+- To point at another backend, set `VITE_API_BASE_URL` in a `.env` file or your shell:
+  ```bash
+  echo "VITE_API_BASE_URL=https://your-api.example.com" > .env
+  ```
+
 ## Tech Stack
 - React 18 + TypeScript
 - Vite 5 build tooling

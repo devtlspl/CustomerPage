@@ -1,20 +1,8 @@
-import { Fragment, ReactNode, useMemo, useState } from "react";
+import { Fragment, ReactNode, useEffect, useMemo, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import GlassCard from "../components/ui/GlassCard";
-
-type SupportAsset = {
-  id: string;
-  name: string;
-  serial: string;
-  type: string;
-};
-
-const supportAssets: SupportAsset[] = [
-  { id: "AST-4010", name: "ThinkPad P14 Gen3", serial: "P14-8891", type: "Endpoint" },
-  { id: "AST-4051", name: "Meraki MX105 Appliance", serial: "MX105-9932", type: "Network" },
-  { id: "AST-4093", name: "MacBook Air M3", serial: "MBA3-2811", type: "Endpoint" },
-  { id: "AST-4120", name: "Okta SSO Licenses", serial: "OKTA-0071", type: "SaaS" }
-];
+import { fetchSupportAssets } from "../services/supportService";
+import type { Asset } from "../services/assetsService";
 
 const supportActions = [
   {
@@ -43,10 +31,42 @@ const supportActions = [
 const SupportPage = () => {
   const [activeModal, setActiveModal] = useState<"contact" | "ticket" | "return" | null>(null);
   const [selectedAssetId, setSelectedAssetId] = useState<string>("");
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loadingAssets, setLoadingAssets] = useState(true);
+  const [assetError, setAssetError] = useState<string | null>(null);
   const selectedAsset = useMemo(
-    () => supportAssets.find((asset) => asset.id === selectedAssetId),
-    [selectedAssetId]
+    () => assets.find((asset) => asset.id === selectedAssetId),
+    [assets, selectedAssetId]
   );
+
+  useEffect(() => {
+    let active = true;
+    const loadAssets = async () => {
+      try {
+        setLoadingAssets(true);
+        const response = await fetchSupportAssets();
+        if (active) {
+          const items = response.items ?? [];
+          setAssets(items);
+        }
+      } catch (err) {
+        console.error("Failed to load support assets", err);
+        if (active) {
+          setAssetError("Unable to fetch assets for support workflows.");
+        }
+      } finally {
+        if (active) {
+          setLoadingAssets(false);
+        }
+      }
+    };
+
+    loadAssets();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const closeModal = () => setActiveModal(null);
 
@@ -57,6 +77,7 @@ const SupportPage = () => {
         <p className="mt-2 text-sm text-slate-600">
           Reach our team, open tickets, or arrange device returns without leaving this page.
         </p>
+        {assetError && <p className="mt-1 text-xs text-red-600">{assetError}</p>}
       </div>
 
       <section className="grid gap-6 xl:grid-cols-3">
@@ -118,10 +139,11 @@ const SupportPage = () => {
         description="Log an incident against your registered assets so our engineers have full context."
       >
         <RaiseTicketForm
-          assets={supportAssets}
+          assets={assets}
           selectedAssetId={selectedAssetId}
           onSelectAsset={setSelectedAssetId}
           selectedAsset={selectedAsset}
+          loadingAssets={loadingAssets}
         />
       </SupportModal>
 
@@ -131,7 +153,7 @@ const SupportPage = () => {
         title="Return IT asset"
         description="Schedule a pickup or swap for a rental asset. Logistics will confirm within 2 hours."
       >
-        <ReturnAssetForm assets={supportAssets} />
+        <ReturnAssetForm assets={assets} loadingAssets={loadingAssets} />
       </SupportModal>
     </div>
   );
@@ -275,17 +297,19 @@ const ContactSupportForm = () => (
 );
 
 type RaiseTicketFormProps = {
-  assets: SupportAsset[];
+  assets: Asset[];
   selectedAssetId: string;
   onSelectAsset: (id: string) => void;
-  selectedAsset?: SupportAsset;
+  selectedAsset?: Asset;
+  loadingAssets: boolean;
 };
 
 const RaiseTicketForm = ({
   assets,
   selectedAssetId,
   onSelectAsset,
-  selectedAsset
+  selectedAsset,
+  loadingAssets
 }: RaiseTicketFormProps) => {
   const [priority, setPriority] = useState<(typeof priorityOptions)[number]>("Normal");
 
@@ -305,22 +329,26 @@ const RaiseTicketForm = ({
           </select>
         </div>
         <div>
-          <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Related asset
-          </label>
-          <select
-            value={selectedAssetId}
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Related asset
+        </label>
+        <select
+          value={selectedAssetId}
             onChange={(event) => onSelectAsset(event.target.value)}
             className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-          >
-            <option value="">Select an asset</option>
-            {assets.map((asset) => (
+        >
+          <option value="">Select an asset</option>
+          {loadingAssets ? (
+            <option disabled>Loading assets…</option>
+          ) : (
+            assets.map((asset) => (
               <option key={asset.id} value={asset.id}>
                 {asset.name} · {asset.id}
               </option>
-            ))}
-          </select>
-        </div>
+            ))
+          )}
+        </select>
+      </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -394,21 +422,26 @@ const RaiseTicketForm = ({
 };
 
 type ReturnAssetFormProps = {
-  assets: SupportAsset[];
+  assets: Asset[];
+  loadingAssets: boolean;
 };
 
-const ReturnAssetForm = ({ assets }: ReturnAssetFormProps) => (
+const ReturnAssetForm = ({ assets, loadingAssets }: ReturnAssetFormProps) => (
   <form className="space-y-5 text-sm">
     <div className="grid gap-3 sm:grid-cols-2">
       <div>
         <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Asset</label>
         <select className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200">
           <option value="">Select asset to return</option>
-          {assets.map((asset) => (
-            <option key={asset.id} value={asset.id}>
-              {asset.name} · {asset.id}
-            </option>
-          ))}
+          {loadingAssets ? (
+            <option disabled>Loading assets…</option>
+          ) : (
+            assets.map((asset) => (
+              <option key={asset.id} value={asset.id}>
+                {asset.name} · {asset.id}
+              </option>
+            ))
+          )}
         </select>
       </div>
       <div>
@@ -443,3 +476,5 @@ const ReturnAssetForm = ({ assets }: ReturnAssetFormProps) => (
     </div>
   </form>
 );
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -12,73 +12,15 @@ import {
 import clsx from "clsx";
 import GlassCard from "../components/ui/GlassCard";
 import DistributionDonut from "../components/dashboard/DistributionDonut";
-
-const summaryCards = [
-  {
-    label: "Paid IT spend (Q3)",
-    value: "$162,400",
-    descriptor: "27 disbursements"
-  },
-  {
-    label: "Pending approvals",
-    value: "$38,920",
-    descriptor: "6 invoices"
-  },
-  {
-    label: "Upcoming renewals (14d)",
-    value: "$24,300",
-    descriptor: "4 renewals"
-  }
-];
-
-const barData = [
-  { month: "Apr", paid: 28, pending: 9, overdue: 3 },
-  { month: "May", paid: 34, pending: 6, overdue: 2 },
-  { month: "Jun", paid: 29, pending: 11, overdue: 4 },
-  { month: "Jul", paid: 41, pending: 6, overdue: 2 },
-  { month: "Aug", paid: 36, pending: 10, overdue: 3 },
-  { month: "Sep", paid: 22, pending: 8, overdue: 2 }
-];
-
-const paymentSegments = [
-  { label: "ACH", value: 52, color: "#2F7BFE" },
-  { label: "Virtual card", value: 24, color: "#38D7CF" },
-  { label: "Wire", value: 16, color: "#7B46FF" },
-  { label: "Other", value: 8, color: "#FFB444" }
-];
+import {
+  fetchPaymentsOverview,
+  type PaymentChannel,
+  type PaymentFlowPoint,
+  type PaymentSummaryCard,
+  type PaymentTrackerItem
+} from "../services/paymentsService";
 
 const listSegments = ["All", "Paid", "Pending", "Upcoming"] as const;
-
-const paymentList = [
-  {
-    id: "PAY-4810",
-    name: "Okta Enterprise",
-    amount: "$14,200",
-    due: "Sep 6, 2024",
-    status: "Pending"
-  },
-  {
-    id: "PAY-4809",
-    name: "Jamf Pro licenses",
-    amount: "$6,420",
-    due: "Sep 2, 2024",
-    status: "Upcoming"
-  },
-  {
-    id: "PAY-4805",
-    name: "Cisco SmartNet",
-    amount: "$18,600",
-    due: "Aug 31, 2024",
-    status: "Paid"
-  },
-  {
-    id: "PAY-4802",
-    name: "Azure consumption",
-    amount: "$31,180",
-    due: "Aug 22, 2024",
-    status: "Paid"
-  }
-] as const;
 
 const statusTone: Record<string, string> = {
   Paid: "bg-emerald-100 text-emerald-700",
@@ -88,6 +30,49 @@ const statusTone: Record<string, string> = {
 
 const PaymentsPage = () => {
   const [segment, setSegment] = useState<(typeof listSegments)[number]>("All");
+  const [summaryCards, setSummaryCards] = useState<PaymentSummaryCard[]>([]);
+  const [monthlyFlow, setMonthlyFlow] = useState<PaymentFlowPoint[]>([]);
+  const [paymentSegments, setPaymentSegments] = useState<PaymentChannel[]>([]);
+  const [paymentList, setPaymentList] = useState<PaymentTrackerItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const loadPayments = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchPaymentsOverview();
+        if (active) {
+          setSummaryCards(response.summaryCards ?? []);
+          setMonthlyFlow(response.monthlyFlow ?? []);
+          setPaymentSegments(response.channels ?? []);
+          setPaymentList(response.tracker ?? []);
+        }
+      } catch (err) {
+        console.error("Failed to load payments overview", err);
+        if (active) {
+          setError("Unable to load payment analytics.");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadPayments();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const filteredPayments = useMemo(
+    () =>
+      paymentList.filter((item) => (segment === "All" ? true : item.status === segment)),
+    [paymentList, segment]
+  );
 
   return (
     <div className="space-y-10">
@@ -96,6 +81,7 @@ const PaymentsPage = () => {
         <p className="mt-2 text-sm text-slate-600">
           Track payment performance, upcoming renewals, and channel mix at a glance.
         </p>
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
 
       <section className="grid gap-6 lg:grid-cols-3">
@@ -106,6 +92,11 @@ const PaymentsPage = () => {
             <p className="mt-2 text-sm text-slate-600">{card.descriptor}</p>
           </GlassCard>
         ))}
+        {!loading && summaryCards.length === 0 && (
+          <GlassCard className="rounded-lg p-6 text-sm text-slate-500">
+            No payment summary data available.
+          </GlassCard>
+        )}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[2fr_1fr]">
@@ -115,7 +106,7 @@ const PaymentsPage = () => {
             <p className="text-xs uppercase tracking-wide text-slate-400">USD (x1k)</p>
           </div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={barData} barSize={16} barGap={8}>
+            <BarChart data={monthlyFlow} barSize={16} barGap={8}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
               <YAxis stroke="#94a3b8" tickLine={false} />
@@ -152,6 +143,9 @@ const PaymentsPage = () => {
                 <span>{segmentItem.value}%</span>
               </div>
             ))}
+            {!loading && paymentSegments.length === 0 && (
+              <p className="text-sm text-slate-500">No payment channel data available.</p>
+            )}
           </div>
         </GlassCard>
       </section>
@@ -177,29 +171,37 @@ const PaymentsPage = () => {
           </div>
         </div>
         <div className="mt-6 space-y-4">
-          {paymentList
-            .filter((item) => (segment === "All" ? true : item.status === segment))
-            .map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-4 py-4 text-sm text-slate-600"
-              >
-                <div>
-                  <p className="text-base font-semibold text-slate-900">{item.name}</p>
-                  <p className="text-xs uppercase tracking-wide text-slate-400">{item.id}</p>
-                </div>
-                <p className="text-lg font-semibold text-slate-900">{item.amount}</p>
-                <p>Due {item.due}</p>
-                <span
-                  className={clsx(
-                    "rounded-full px-3 py-1 text-xs font-semibold",
-                    statusTone[item.status]
-                  )}
-                >
-                  {item.status}
-                </span>
+          {loading && (
+            <div className="rounded-md border border-slate-200 px-4 py-4 text-sm text-slate-500">
+              Loading payment tracker…
+            </div>
+          )}
+          {!loading && filteredPayments.length === 0 && (
+            <div className="rounded-md border border-slate-200 px-4 py-4 text-sm text-slate-500">
+              No payments match this filter.
+            </div>
+          )}
+          {filteredPayments.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-4 py-4 text-sm text-slate-600"
+            >
+              <div>
+                <p className="text-base font-semibold text-slate-900">{item.name}</p>
+                <p className="text-xs uppercase tracking-wide text-slate-400">{item.id}</p>
               </div>
-            ))}
+              <p className="text-lg font-semibold text-slate-900">{item.amount}</p>
+              <p>Due {item.due}</p>
+              <span
+                className={clsx(
+                  "rounded-full px-3 py-1 text-xs font-semibold",
+                  statusTone[item.status]
+                )}
+              >
+                {item.status}
+              </span>
+            </div>
+          ))}
         </div>
       </GlassCard>
     </div>

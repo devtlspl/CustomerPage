@@ -1,64 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
-
-type DocStatus = "Paid" | "Pending" | "Overdue";
-
-type DocumentItem = {
-  id: string;
-  date: string;
-  amount: string;
-  status: DocStatus;
-  reference: string;
-  description: string;
-};
-
-const invoices: DocumentItem[] = [
-  {
-    id: "INV-5421",
-    date: "Aug 22, 2024",
-    amount: "$14,200",
-    status: "Paid",
-    reference: "SaaS renewals - Q3 bundle",
-    description: "Settled via ACH - Ref #ACH-2213"
-  },
-  {
-    id: "INV-5428",
-    date: "Aug 28, 2024",
-    amount: "$18,640",
-    status: "Pending",
-    reference: "Endpoint lifecycle services",
-    description: "Awaiting approval - Due in 5 days"
-  },
-  {
-    id: "INV-5436",
-    date: "Sep 2, 2024",
-    amount: "$26,400",
-    status: "Overdue",
-    reference: "Network hardware refresh",
-    description: "3 days past due - Late fee applies Sep 7"
-  }
-];
-
-const challans: DocumentItem[] = [
-  {
-    id: "DC-9810",
-    date: "Aug 18, 2024",
-    amount: "24 devices",
-    status: "Paid",
-    reference: "Endpoint deployment for Sales",
-    description: "Signed by Alex Morgan - Received 10:30 AM"
-  },
-  {
-    id: "DC-9816",
-    date: "Aug 29, 2024",
-    amount: "18 racks",
-    status: "Pending",
-    reference: "Data center networking wave 2",
-    description: "Awaiting confirmation at Houston Hub"
-  }
-];
-
-const statusStyles: Record<DocStatus, string> = {
+import {
+  fetchDocuments,
+  type BusinessDocument,
+  type DocumentStatus
+} from "../services/documentsService";
+const statusStyles: Record<DocumentStatus, string> = {
   Paid: "bg-green-100 text-green-700",
   Pending: "bg-amber-100 text-amber-700",
   Overdue: "bg-red-100 text-red-700"
@@ -74,6 +21,41 @@ const filterOptions = ["All", "Paid", "Pending", "Overdue"] as const;
 const InvoicesPage = () => {
   const [tab, setTab] = useState<(typeof tabOptions)[number]["value"]>("invoices");
   const [filter, setFilter] = useState<(typeof filterOptions)[number]>("All");
+  const [invoices, setInvoices] = useState<BusinessDocument[]>([]);
+  const [challans, setChallans] = useState<BusinessDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    const loadDocuments = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetchDocuments();
+        if (active) {
+          setInvoices(response.invoices ?? []);
+          setChallans(response.deliveryChallans ?? []);
+        }
+      } catch (err) {
+        console.error("Failed to load documents", err);
+        if (active) {
+          setError("Unable to load invoices and delivery challans.");
+          setInvoices([]);
+          setChallans([]);
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadDocuments();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const data = tab === "invoices" ? invoices : challans;
   const filteredData = useMemo(
@@ -86,20 +68,21 @@ const InvoicesPage = () => {
 
   return (
     <div className="space-y-8">
-      <HeaderSection />
+      <HeaderSection error={error} />
       <DocumentSection
         tab={tab}
         onChangeTab={setTab}
         filter={filter}
         onChangeFilter={setFilter}
         data={filteredData}
+        loading={loading}
       />
       <TimelineSection />
     </div>
   );
 };
 
-const HeaderSection = () => (
+const HeaderSection = ({ error }: { error: string | null }) => (
   <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div>
@@ -107,6 +90,7 @@ const HeaderSection = () => (
         <p className="mt-2 text-sm text-slate-600">
           Review customer billing documents, filter by status, and download what you need in seconds.
         </p>
+        {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
       </div>
       <button className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
         Export summary
@@ -120,10 +104,18 @@ type DocumentSectionProps = {
   onChangeTab: (value: (typeof tabOptions)[number]["value"]) => void;
   filter: (typeof filterOptions)[number];
   onChangeFilter: (value: (typeof filterOptions)[number]) => void;
-  data: DocumentItem[];
+  data: BusinessDocument[];
+  loading: boolean;
 };
 
-const DocumentSection = ({ tab, onChangeTab, filter, onChangeFilter, data }: DocumentSectionProps) => (
+const DocumentSection = ({
+  tab,
+  onChangeTab,
+  filter,
+  onChangeFilter,
+  data,
+  loading
+}: DocumentSectionProps) => (
   <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
     <div className="flex flex-wrap items-center gap-4">
       <div className="flex gap-2">
@@ -174,6 +166,20 @@ const DocumentSection = ({ tab, onChangeTab, filter, onChangeFilter, data }: Doc
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 text-slate-700">
+          {loading && (
+            <tr>
+              <td className="px-4 py-4 text-sm text-slate-500" colSpan={6}>
+                Loading documents…
+              </td>
+            </tr>
+          )}
+          {!loading && data.length === 0 && (
+            <tr>
+              <td className="px-4 py-4 text-sm text-slate-500" colSpan={6}>
+                No documents available for this filter.
+              </td>
+            </tr>
+          )}
           {data.map((item) => (
             <tr key={item.id} className="hover:bg-slate-50">
               <td className="px-4 py-3">
@@ -273,3 +279,6 @@ const TimelineSection = () => (
 );
 
 export default InvoicesPage;
+
+
+
