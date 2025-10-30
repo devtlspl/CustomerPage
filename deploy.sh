@@ -8,6 +8,24 @@ if [ "${SKIP_INSTALL:-}" != "true" ]; then
   npm install
 fi
 
+if [ -z "${GITHUB_REPOSITORY:-}" ]; then
+  remote_url=$(git remote get-url origin)
+  if [[ $? -ne 0 ]]; then
+    echo "Unable to detect git remote. Ensure this directory is a git repository." >&2
+    exit 1
+  fi
+
+  if [[ "$remote_url" =~ github\.com[:/]+([^/.]+/[^/.]+)(\.git)?$ ]]; then
+    export GITHUB_REPOSITORY="${BASH_REMATCH[1]}"
+    echo "Detected repository: ${GITHUB_REPOSITORY}"
+  else
+    echo "Could not parse GitHub repository from remote URL '$remote_url'. Set GITHUB_REPOSITORY manually." >&2
+    exit 1
+  fi
+fi
+
+echo "Using base path for build: ${GITHUB_REPOSITORY}"
+
 echo "Building production bundle (npm run build)"
 npm run build
 
@@ -16,9 +34,6 @@ git add dist -f
 
 echo "Committing deploy snapshot (ignore errors if nothing changed)"
 git commit -m "Deploy to gh-pages" || true
-
-echo "Ensure remote points at SVX-WEB-25-002 if you recently renamed the repo:"
-echo "  git remote set-url origin <git-url>/SVX-WEB-25-002.git"
 
 echo "Pushing dist subtree to gh-pages"
 git subtree push --prefix dist origin gh-pages

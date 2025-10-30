@@ -62,11 +62,9 @@ src/
 - `npm run dev` - Start Vite dev server.
 - `npm run build` - Type-check and build for production.
 - `npm run preview` - Preview built assets locally.
-- `powershell -ExecutionPolicy Bypass -File ./deploy.ps1` - Build and push `dist/` to `gh-pages` (Windows).
-- If you renamed the repo locally, point your remote to `SVX-WEB-25-002` before deploying:
-  ```bash
-  git remote set-url origin git@github.com:<your-org-or-user>/SVX-WEB-25-002.git
-  ```
+- `pwsh -ExecutionPolicy Bypass ./deploy.ps1` - Build and push `dist/` to `gh-pages` (Windows).
+- `./deploy.sh` - Same as above for macOS/Linux.
+  Both scripts auto-detect `GITHUB_REPOSITORY`; set it manually if your remote is non-standard.
 
 During `npm run build`, a `postbuild` step copies `dist/index.html` to `dist/404.html` so direct links to routes keep working on GitHub Pages.
 

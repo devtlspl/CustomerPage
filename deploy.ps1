@@ -12,6 +12,22 @@ if (-not $SkipInstall) {
   }
 }
 
+if (-not $env:GITHUB_REPOSITORY -or $env:GITHUB_REPOSITORY -eq "") {
+  $remoteUrl = git remote get-url origin
+  if ($LASTEXITCODE -ne 0) {
+    throw "Unable to detect git remote. Ensure this is a git repository."
+  }
+
+  if ($remoteUrl -match "github.com[:/](.+?)(\.git)?$") {
+    $env:GITHUB_REPOSITORY = $Matches[1]
+    Write-Host "Detected repository: $($env:GITHUB_REPOSITORY)" -ForegroundColor DarkCyan
+  } else {
+    throw "Could not parse GitHub repository from remote URL '$remoteUrl'. Set GITHUB_REPOSITORY manually."
+  }
+}
+
+Write-Host "Using base path for build: $($env:GITHUB_REPOSITORY)" -ForegroundColor DarkCyan
+
 Write-Host "Building production bundle (npm run build)" -ForegroundColor DarkCyan
 npm run build
 if ($LASTEXITCODE -ne 0) {
@@ -23,9 +39,9 @@ git add dist -f
 
 Write-Host "Committing deploy snapshot (ignore errors if nothing changed)" -ForegroundColor DarkCyan
 git commit -m "Deploy to gh-pages" | Out-Null
-
-Write-Host "Ensure remote points at SVX-WEB-25-002 if you recently renamed the repo:" -ForegroundColor DarkCyan
-Write-Host "  git remote set-url origin <git-url>/SVX-WEB-25-002.git" -ForegroundColor DarkGray
+if ($LASTEXITCODE -ne 0) {
+  Write-Host "No changes to commit (likely already up to date)." -ForegroundColor DarkYellow
+}
 
 Write-Host "Pushing dist subtree to gh-pages" -ForegroundColor DarkCyan
 git subtree push --prefix dist origin gh-pages
